@@ -3,136 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pak-Doc Web Vault | File Storage</title>
+    <title>Pak-Doc Vault | Mobile Storage Edition</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h2 { color: #1e3799; text-align: center; margin-top: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #eef2f7; margin: 0; padding: 15px; }
+        .container { max-width: 450px; margin: auto; background: white; padding: 20px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        h2 { color: #1e3799; text-align: center; font-size: 24px; margin-bottom: 20px; }
         
-        .search-box { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        /* High-Visibility Search */
+        .search-box { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: 2px solid #1e3799; box-sizing: border-box; font-size: 16px; outline: none; }
 
-        .input-group { background: #f8f9fa; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 20px; }
-        input, select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        .upload-section { background: #f9f9f9; padding: 20px; border-radius: 15px; border: 2px dashed #cbd5e0; margin-bottom: 20px; text-align: center; }
+        input[type="file"] { margin: 10px 0; font-size: 14px; width: 100%; }
         
-        /* Custom File Upload Styling */
-        .file-label { font-size: 12px; color: #666; font-weight: bold; margin-bottom: 5px; display: block; }
-        
-        .btn-save { background: #1e3799; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-save:hover { background: #0984e3; }
+        .btn-save { background: #1e3799; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(30, 55, 153, 0.3); }
+        .btn-save:active { transform: scale(0.98); }
 
-        .doc-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .doc-item:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .doc-info b { display: block; color: #2c3e50; font-size: 15px; }
-        .doc-info span { font-size: 10px; background: #e1e8ed; padding: 3px 8px; border-radius: 5px; color: #1e3799; font-weight: bold; text-transform: uppercase; }
+        /* Document List Styling */
+        .doc-list { margin-top: 25px; }
+        .doc-card { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 12px; border: 1px solid #edf2f7; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .info b { display: block; font-size: 16px; color: #2d3748; }
+        .info span { font-size: 11px; color: #fff; background: #0984e3; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
         
-        .actions a { text-decoration: none; color: #1e3799; font-weight: bold; margin-right: 15px; font-size: 14px; }
-        .delete-btn { color: #ff7675; border: none; background: none; cursor: pointer; font-size: 16px; }
+        .download-link { text-decoration: none; color: #1e3799; font-weight: bold; background: #e0e7ff; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
+        .del-btn { background: none; border: none; color: #e53e3e; font-size: 18px; margin-left: 10px; cursor: pointer; }
+        
+        #status { font-size: 12px; color: #4a5568; margin-top: 10px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>📂 Pak-Doc Vault</h2>
+    <h2>📂 Digital Vault</h2>
     
-    <input type="text" id="search" class="search-box" placeholder="🔍 Search your documents...">
+    <input type="text" id="search" class="search-box" placeholder="🔍 Type name to find...">
 
-    <div class="input-group">
-        <input type="text" id="docTitle" placeholder="Document Name (e.g. Lawn Price List)">
-        <select id="docCategory">
-            <option value="Business">Business</option>
-            <option value="Study">Study</option>
-            <option value="Bills">Bills</option>
+    <div class="upload-section">
+        <input type="text" id="docTitle" placeholder="Document Title (e.g. Science PDF)" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ddd;">
+        
+        <select id="docCategory" style="width:100%; padding:10px; margin-bottom:10px;">
             <option value="General">General</option>
+            <option value="Business">Business</option>
+            <option value="Bills">Bills</option>
+            <option value="Study">Study</option>
         </select>
+
+        <p style="font-size:12px; color:#666;">Tap below to open Phone Storage:</p>
+        <input type="file" id="fileSelector" accept=".pdf,.doc,.docx,.jpg,.png">
         
-        <label class="file-label">Choose PDF, Image, or Word Doc:</label>
-        <input type="file" id="fileInput" accept=".pdf,.jpg,.png,.doc,.docx">
-        
-        <button class="btn-save" onclick="handleFileUpload()">📁 Save Document</button>
+        <button class="btn-save" onclick="processAndSave()">Save to Vault</button>
+        <div id="status"></div>
     </div>
 
-    <div id="docList"></div>
+    <div id="docContainer" class="doc-list"></div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', displayDocs);
+    // Load and Show Documents
+    function loadDocs(query = "") {
+        const container = document.getElementById('docContainer');
+        const docs = JSON.parse(localStorage.getItem('userVault')) || [];
+        container.innerHTML = "";
 
-    function handleFileUpload() {
+        const filtered = docs.filter(d => 
+            d.name.toLowerCase().includes(query.toLowerCase()) || 
+            d.cat.toLowerCase().includes(query.toLowerCase())
+        );
+
+        filtered.reverse().forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'doc-card';
+            div.innerHTML = `
+                <div class="info">
+                    <span>${d.cat}</span>
+                    <b>${d.name}</b>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <a href="${d.fileData}" download="${d.name}" class="download-link">Open</a>
+                    <button class="del-btn" onclick="removeDoc(${d.id})">🗑️</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Process File from Storage
+    function processAndSave() {
         const title = document.getElementById('docTitle').value;
-        const category = document.getElementById('docCategory').value;
-        const file = document.getElementById('fileInput').files[0];
+        const cat = document.getElementById('docCategory').value;
+        const file = document.getElementById('fileSelector').files[0];
+        const status = document.getElementById('status');
 
         if (!title || !file) {
-            alert("Please provide a Name and select a File!");
+            alert("Please enter a name and select a file from storage!");
             return;
         }
 
-        // Limit file size to 2MB to prevent browser lag
-        if (file.size > 2097152) { 
-            alert("File is too large! Please keep files under 2MB.");
-            return;
-        }
+        status.innerText = "⏳ Converting file... please wait.";
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            const base64Data = e.target.result;
-            saveToVault(title, category, base64Data);
+            const base64String = e.target.result;
+            const newEntry = { id: Date.now(), name: title, cat: cat, fileData: base64String };
+            
+            let vault = JSON.parse(localStorage.getItem('userVault')) || [];
+            vault.push(newEntry);
+            
+            try {
+                localStorage.setItem('userVault', JSON.stringify(vault));
+                status.innerText = "✅ Saved Successfully!";
+                document.getElementById('docTitle').value = "";
+                document.getElementById('fileSelector').value = "";
+                loadDocs();
+            } catch (err) {
+                status.innerText = "❌ Storage full! Delete old files.";
+            }
         };
         reader.readAsDataURL(file);
     }
 
-    function saveToVault(title, category, data) {
-        const newDoc = { id: Date.now(), title, category, data };
-        let docs = JSON.parse(localStorage.getItem('vaultDocs')) || [];
-        docs.push(newDoc);
-        
-        try {
-            localStorage.setItem('vaultDocs', JSON.stringify(docs));
-            alert("Saved Successfully!");
-            resetInputs();
-            displayDocs();
-        } catch (e) {
-            alert("Storage Full! Delete some old files first.");
-        }
+    function removeDoc(id) {
+        let vault = JSON.parse(localStorage.getItem('userVault')) || [];
+        vault = vault.filter(item => item.id !== id);
+        localStorage.setItem('userVault', JSON.stringify(vault));
+        loadDocs();
     }
 
-    function displayDocs() {
-        const docs = JSON.parse(localStorage.getItem('vaultDocs')) || [];
-        const searchTerm = document.getElementById('search').value.toLowerCase();
-        const listDiv = document.getElementById('docList');
-        listDiv.innerHTML = '';
+    // Search Trigger
+    document.getElementById('search').addEventListener('input', (e) => {
+        loadDocs(e.target.value);
+    });
 
-        docs.filter(d => d.title.toLowerCase().includes(searchTerm) || d.category.toLowerCase().includes(searchTerm))
-            .forEach(d => {
-                const item = document.createElement('div');
-                item.className = 'doc-item';
-                item.innerHTML = `
-                    <div class="doc-info">
-                        <span>${d.category}</span>
-                        <b>${d.title}</b>
-                    </div>
-                    <div class="actions">
-                        <a href="${d.data}" download="${d.title}">📥 Download</a>
-                        <button class="delete-btn" onclick="deleteDoc(${d.id})">🗑️</button>
-                    </div>
-                `;
-                listDiv.appendChild(item);
-            });
-    }
-
-    function deleteDoc(id) {
-        let docs = JSON.parse(localStorage.getItem('vaultDocs')) || [];
-        docs = docs.filter(d => d.id !== id);
-        localStorage.setItem('vaultDocs', JSON.stringify(docs));
-        displayDocs();
-    }
-
-    function resetInputs() {
-        document.getElementById('docTitle').value = '';
-        document.getElementById('fileInput').value = '';
-    }
-
-    document.getElementById('search').addEventListener('input', displayDocs);
+    // Initial Start
+    loadDocs();
 </script>
 
 </body>
