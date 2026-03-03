@@ -3,46 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pak-Doc Vault | Save PDFs, Links & Docs</title>
+    <title>Pak-Doc Web Vault</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
-        .hero { background: linear-gradient(135deg, #1e3799, #0984e3); padding: 40px; border-radius: 30px; box-shadow: 0 10px 30px rgba(9, 132, 227, 0.4); max-width: 600px; margin: auto; }
-        h1 { font-size: 2.2rem; margin-bottom: 10px; }
-        .tagline { font-style: italic; color: #dcdde1; margin-bottom: 20px; }
-        .price { font-size: 1.3rem; color: #00cec9; font-weight: bold; margin: 20px 0; }
-        .download-btn { background: white; color: #1e3799; padding: 18px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255,255,255,0.2); transition: 0.3s; }
-        .download-btn:hover { transform: translateY(-3px); background: #f0f2f5; }
-        .features { display: flex; justify-content: center; gap: 10px; margin-top: 20px; font-size: 0.9rem; }
-        .feature-tag { border: 1px solid rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 15px; }
-        .instructions { text-align: left; max-width: 500px; margin: 40px auto; background: #1a1a1a; padding: 25px; border-radius: 20px; border: 1px solid #333; line-height: 1.6; }
-        code { background: #333; padding: 2px 6px; border-radius: 4px; color: #ff7675; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #1e3799; text-align: center; margin-bottom: 20px; }
+        
+        /* Search Bar */
+        .search-box { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+
+        /* Input Section */
+        .input-group { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; }
+        input, select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ddd; box-sizing: border-box; }
+        .btn-save { background: #1e3799; color: white; border: none; width: 100%; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+        /* List Section */
+        .doc-list { margin-top: 20px; }
+        .doc-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #1e3799; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .doc-info b { display: block; color: #2c3e50; }
+        .doc-info span { font-size: 12px; color: #7f8c8d; background: #ecf0f1; padding: 2px 6px; border-radius: 4px; }
+        .actions a { text-decoration: none; color: #0984e3; font-weight: bold; font-size: 14px; }
+        .delete-btn { color: #ff7675; font-size: 12px; cursor: pointer; margin-left: 10px; border: none; background: none; }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>📂 Pak-Doc Vault Pro</h1>
-        <p class="tagline">Don't lose important group documents ever again!</p>
-        
-        <div class="features">
-            <span class="feature-tag">✅ Save PDFs</span>
-            <span class="feature-tag">✅ Word Docs</span>
-            <span class="feature-tag">✅ Web Links</span>
-        </div>
 
-        <div class="price">Full Version: Rs. 200 (One-Time)</div>
-        
-        <a href="VaultExtension.zip" class="download-btn">📥 Download Extension (.zip)</a>
+<div class="container">
+    <h2>📂 Pak-Doc Web Vault</h2>
+    
+    <input type="text" id="search" class="search-box" placeholder="🔍 Search by name or category...">
+
+    <div class="input-group">
+        <input type="text" id="docTitle" placeholder="Document Name (e.g. Science Notes)">
+        <select id="docCategory">
+            <option value="General">General</option>
+            <option value="Business">Business</option>
+            <option value="Study">Study</option>
+            <option value="Bills">Bills</option>
+        </select>
+        <input type="text" id="docLink" placeholder="Paste Link (URL) or Google Drive Link">
+        <button class="btn-save" onclick="saveDoc()">Save to My Vault</button>
     </div>
 
-    <div class="instructions">
-        <h3 style="color:#25D366;">🚀 PC Installation Guide:</h3>
-        1. Download <b>VaultExtension.zip</b>.<br>
-        2. Right-click and <b>"Extract All"</b>.<br>
-        3. Open Chrome and go to <code>chrome://extensions</code><br>
-        4. Turn on <b>"Developer Mode"</b> (Top Right).<br>
-        5. Click <b>"Load Unpacked"</b> and select the extracted folder.
-    </div>
+    <div id="docList" class="doc-list"></div>
+</div>
 
-    <p style="opacity: 0.6; font-size: 12px; margin-top: 50px;">Support & Activation: 0314-9664324</p>
+<script>
+    // Load documents on startup
+    document.addEventListener('DOMContentLoaded', displayDocs);
+
+    function saveDoc() {
+        const title = document.getElementById('docTitle').value;
+        const category = document.getElementById('docCategory').value;
+        const link = document.getElementById('docLink').value;
+
+        if (!title || !link) {
+            alert("Please fill in both Name and Link!");
+            return;
+        }
+
+        const newDoc = { id: Date.now(), title, category, link };
+        let docs = JSON.parse(localStorage.getItem('myDocs')) || [];
+        docs.push(newDoc);
+        localStorage.setItem('myDocs', JSON.stringify(docs));
+
+        // Clear inputs
+        document.getElementById('docTitle').value = '';
+        document.getElementById('docLink').value = '';
+        
+        displayDocs();
+    }
+
+    function displayDocs() {
+        const docs = JSON.parse(localStorage.getItem('myDocs')) || [];
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const listDiv = document.getElementById('docList');
+        listDiv.innerHTML = '';
+
+        const filtered = docs.filter(d => 
+            d.title.toLowerCase().includes(searchTerm) || 
+            d.category.toLowerCase().includes(searchTerm)
+        );
+
+        filtered.forEach(d => {
+            const item = document.createElement('div');
+            item.className = 'doc-item';
+            item.innerHTML = `
+                <div class="doc-info">
+                    <span>${d.category}</span>
+                    <b>${d.title}</b>
+                </div>
+                <div class="actions">
+                    <a href="${d.link}" target="_blank">🔗 Open</a>
+                    <button class="delete-btn" onclick="deleteDoc(${d.id})">🗑️</button>
+                </div>
+            `;
+            listDiv.appendChild(item);
+        });
+    }
+
+    function deleteDoc(id) {
+        let docs = JSON.parse(localStorage.getItem('myDocs')) || [];
+        docs = docs.filter(d => d.id !== id);
+        localStorage.setItem('myDocs', JSON.stringify(docs));
+        displayDocs();
+    }
+
+    // Live Search
+    document.getElementById('search').addEventListener('input', displayDocs);
+</script>
+
 </body>
 </html>
