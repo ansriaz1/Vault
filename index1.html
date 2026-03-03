@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pak-Doc Web Vault | File Storage</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h2 { color: #1e3799; text-align: center; margin-top: 0; }
+        
+        .search-box { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+
+        .input-group { background: #f8f9fa; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        
+        /* Custom File Upload Styling */
+        .file-label { font-size: 12px; color: #666; font-weight: bold; margin-bottom: 5px; display: block; }
+        
+        .btn-save { background: #1e3799; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-save:hover { background: #0984e3; }
+
+        .doc-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .doc-item:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .doc-info b { display: block; color: #2c3e50; font-size: 15px; }
+        .doc-info span { font-size: 10px; background: #e1e8ed; padding: 3px 8px; border-radius: 5px; color: #1e3799; font-weight: bold; text-transform: uppercase; }
+        
+        .actions a { text-decoration: none; color: #1e3799; font-weight: bold; margin-right: 15px; font-size: 14px; }
+        .delete-btn { color: #ff7675; border: none; background: none; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📂 Pak-Doc Vault</h2>
+    
+    <input type="text" id="search" class="search-box" placeholder="🔍 Search your documents...">
+
+    <div class="input-group">
+        <input type="text" id="docTitle" placeholder="Document Name (e.g. Lawn Price List)">
+        <select id="docCategory">
+            <option value="Business">Business</option>
+            <option value="Study">Study</option>
+            <option value="Bills">Bills</option>
+            <option value="General">General</option>
+        </select>
+        
+        <label class="file-label">Choose PDF, Image, or Word Doc:</label>
+        <input type="file" id="fileInput" accept=".pdf,.jpg,.png,.doc,.docx">
+        
+        <button class="btn-save" onclick="handleFileUpload()">📁 Save Document</button>
+    </div>
+
+    <div id="docList"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', displayDocs);
+
+    function handleFileUpload() {
+        const title = document.getElementById('docTitle').value;
+        const category = document.getElementById('docCategory').value;
+        const file = document.getElementById('fileInput').files[0];
+
+        if (!title || !file) {
+            alert("Please provide a Name and select a File!");
+            return;
+        }
+
+        // Limit file size to 2MB to prevent browser lag
+        if (file.size > 2097152) { 
+            alert("File is too large! Please keep files under 2MB.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Data = e.target.result;
+            saveToVault(title, category, base64Data);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function saveToVault(title, category, data) {
+        const newDoc = { id: Date.now(), title, category, data };
+        let docs = JSON.parse(localStorage.getItem('vaultDocs')) || [];
+        docs.push(newDoc);
+        
+        try {
+            localStorage.setItem('vaultDocs', JSON.stringify(docs));
+            alert("Saved Successfully!");
+            resetInputs();
+            displayDocs();
+        } catch (e) {
+            alert("Storage Full! Delete some old files first.");
+        }
+    }
+
+    function displayDocs() {
+        const docs = JSON.parse(localStorage.getItem('vaultDocs')) || [];
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const listDiv = document.getElementById('docList');
+        listDiv.innerHTML = '';
+
+        docs.filter(d => d.title.toLowerCase().includes(searchTerm) || d.category.toLowerCase().includes(searchTerm))
+            .forEach(d => {
+                const item = document.createElement('div');
+                item.className = 'doc-item';
+                item.innerHTML = `
+                    <div class="doc-info">
+                        <span>${d.category}</span>
+                        <b>${d.title}</b>
+                    </div>
+                    <div class="actions">
+                        <a href="${d.data}" download="${d.title}">📥 Download</a>
+                        <button class="delete-btn" onclick="deleteDoc(${d.id})">🗑️</button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+    }
+
+    function deleteDoc(id) {
+        let docs = JSON.parse(localStorage.getItem('vaultDocs')) || [];
+        docs = docs.filter(d => d.id !== id);
+        localStorage.setItem('vaultDocs', JSON.stringify(docs));
+        displayDocs();
+    }
+
+    function resetInputs() {
+        document.getElementById('docTitle').value = '';
+        document.getElementById('fileInput').value = '';
+    }
+
+    document.getElementById('search').addEventListener('input', displayDocs);
+</script>
+
+</body>
+</html>
