@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { width: 320px; font-family: sans-serif; padding: 15px; background: #f4f7f6; }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h3 { margin-top: 0; color: #1e3799; text-align: center; }
+        input, select { width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #ddd; box-sizing: border-box; }
+        .btn { background: #1e3799; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; border-bottom: 1px solid #eee; }
+        .item { background: #fff; padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .tag { font-size: 10px; background: #dcdde1; padding: 2px 5px; border-radius: 4px; font-weight: bold; color: #555; }
+        .lock-msg { font-size: 11px; color: red; display: none; text-align: center; margin-top: 10px; }
+        label { font-size: 12px; font-weight: bold; color: #666; display: block; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3>📂 Pak-Doc Vault</h3>
+        <input type="text" id="search" placeholder="🔍 Search (Name or Category)...">
+        
+        <div id="list"></div>
+        
+        <select id="docCategory">
+            <option value="General">General</option>
+            <option value="Business">Business</option>
+            <option value="Bills">Bills</option>
+            <option value="Study">Study</option>
+        </select>
+        
+        <input type="text" id="docTitle" placeholder="Document Name (e.g. Lawn PDF)">
+        
+        <label>Option A: Paste a Link</label>
+        <input type="text" id="docLink" placeholder="Paste URL here">
+        
+        <label>Option B: Upload File (PDF/Word)</label>
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx">
+        
+        <button class="btn" id="save">Save to Vault</button>
+        <p id="lock" class="lock-msg">🔒 Limit Reached! Pay Rs. 200 to Unlock.</p>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
